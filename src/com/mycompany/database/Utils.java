@@ -147,4 +147,99 @@ public class Utils {
         }
         return false;
     }
+    public static String classifyFeedback(String feedback) {
+        try {
+            // URL API
+            URL url = new URL("http://oop.dinhmanhhung.net/classify-feedback");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("accept", "application/json");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            // Dữ liệu POST
+            String jsonInput = String.format("""
+                {
+                    "feedback": "%s"
+                }
+            """, feedback);
+
+            // Gửi yêu cầu
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonInput.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            // Kiểm tra mã phản hồi
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // Đọc phản hồi
+                InputStream inputStream = connection.getInputStream();
+                StringBuilder response = new StringBuilder();
+                int ch;
+                while ((ch = inputStream.read()) != -1) {
+                    response.append((char) ch);
+                }
+                connection.disconnect();
+
+                // Trả về classification
+                return response.toString().split("\"classification\":\"")[1].split("\"")[0];
+            } else {
+                System.err.println("Error: HTTP response code " + responseCode);
+            }
+
+            connection.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String chat(String userInput) {
+        try {
+            // URL API
+            URL url = new URL("http://oop.dinhmanhhung.net/suggest-movie");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("accept", "application/json");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            // Dữ liệu POST
+            String jsonInput = String.format("""
+                {
+                    "user_input": "%s"
+                }
+            """, userInput);
+
+            // Gửi yêu cầu
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonInput.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            // Kiểm tra mã phản hồi
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // Đọc phản hồi
+                InputStream inputStream = connection.getInputStream();
+                StringBuilder response = new StringBuilder();
+                int ch;
+                while ((ch = inputStream.read()) != -1) {
+                    response.append((char) ch);
+                }
+                connection.disconnect();
+
+                // Trả về suggested_feedback
+                return response.toString().split("\"suggested_feedback\":\"")[1].split("\"")[0];
+            } else {
+                System.err.println("Error: HTTP response code " + responseCode);
+            }
+
+            connection.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
