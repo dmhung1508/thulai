@@ -28,12 +28,32 @@ public class FeedbackDatabase {
         
     }
 
+    public void deleteFeedback(String movie, String user) {
+        Document query = new Document("movie", movie).append("user", user);
+        collection.deleteOne(query);
+    }
 
     public List<Feedback> getFeedbacks(String movie) 
     {
         List<Feedback> feedbacks = new ArrayList<>();
         Document query = new Document("movie", movie);
         MongoCursor<Document> cursor = collection.find(query).iterator();
+        while (cursor.hasNext()) {
+            Document document = cursor.next();
+            feedbacks.add(new Feedback(
+                document.getString("user"),
+                document.getString("movie"),
+                document.getString("feedback"),
+                document.getString("status")
+            ));
+        }
+
+        return feedbacks;
+    }
+    public List<Feedback> getAllFeedbacks() 
+    {
+        List<Feedback> feedbacks = new ArrayList<>();
+        MongoCursor<Document> cursor = collection.find().iterator();
         while (cursor.hasNext()) {
             Document document = cursor.next();
             feedbacks.add(new Feedback(

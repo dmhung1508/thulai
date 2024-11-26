@@ -812,14 +812,14 @@ public class AdminPanel extends JFrame {
         String user = (String) feedbackTable.getValueAt(selectedRow, 1);
 
         int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the feedback for movie: " + movie + " by user: " + user + "?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
-//        if (result == JOptionPane.YES_OPTION) {
-//            try {
-//                feedbackDatabase.deleteFeedback(movie, user);
-//                refreshFeedbackTable();
-//            } catch (Exception ex) {
-//                JOptionPane.showMessageDialog(this, "Error deleting feedback: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-//            }
-//        }
+        if (result == JOptionPane.YES_OPTION) {
+            try {
+                feedbackDatabase.deleteFeedback(movie, user);
+                refreshFeedbackTable();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error deleting feedback: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private JPanel createFeedbackInputPanel() {
@@ -949,15 +949,15 @@ public class AdminPanel extends JFrame {
     private void refreshFeedbackTable() {
         DefaultTableModel model = (DefaultTableModel) feedbackTable.getModel();
         model.setRowCount(0);
-//        List<Feedback> feedbacks = feedbackDatabase.getAllFeedbacks();
-//        for (Feedback feedback : feedbacks) {
-//            model.addRow(new Object[]{
-//                    feedback.getMovie(),
-//                    feedback.getUser(),
-//                    feedback.getFeedback(),
-//                    feedback.getStatus()
-//            });
-//        }
+       List<Feedback> feedbacks = feedbackDatabase.getAllFeedbacks();
+       for (Feedback feedback : feedbacks) {
+           model.addRow(new Object[]{
+                   feedback.getMovie(),
+                   feedback.getUser(),
+                   feedback.getFeedback(),
+                   feedback.getStatus()
+           });
+       }
     }
 
     private boolean areMovieFieldsValid(JPanel panel) {
