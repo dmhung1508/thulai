@@ -21,6 +21,16 @@ public class CinemaManager {
                 .append("time", showHours);
         collection.insertOne(cinema);
     }
+    public void updateCinema(String name, List<String>showHours)
+    {
+        Document cinema = new Document("cinema", name)
+                .append("time", showHours);
+        collection.replaceOne(new Document("cinema", name), cinema);
+    }
+    public void deleteCinema(String name)
+    {
+        collection.deleteOne(new Document("cinema", name));
+    }
     public List<Cinema> getAllCinemas() {
         List<Cinema> Cinemas = new ArrayList<>();
         try (MongoCursor<Document> cursor = collection.find().iterator()) {

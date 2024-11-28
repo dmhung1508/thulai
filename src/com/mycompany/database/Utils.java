@@ -1,6 +1,7 @@
 package com.mycompany.database;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -9,10 +10,11 @@ import javax.imageio.ImageIO;
 
 public class Utils {
     public static BufferedImage getQR(int amount, String addInfo) {
+        HttpURLConnection connection = null;
         try {
             // URL API
-            URL url = new URL("https://oop.dinhmanhhung.net/get_QR");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            URL url = new URL("http://oop.dinhmanhhung.net/get_QR");
+            connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("accept", "application/json");
             connection.setRequestProperty("Content-Type", "application/json");
@@ -39,19 +41,26 @@ public class Utils {
                 // Đọc ảnh trả về
                 InputStream inputStream = connection.getInputStream();
                 BufferedImage image = ImageIO.read(inputStream);
-                connection.disconnect();
-                return image;
                 
+                // Lưu ảnh kiểm tra
+                File outputFile = new File("output.png");
+                ImageIO.write(image, "png", outputFile);
+                
+                return image;
             } else {
                 System.err.println("Error: HTTP response code " + responseCode);
             }
 
-            connection.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
         return null;
     }
+
 
     public static boolean checkTicketExists(String ticket) {
         try {
